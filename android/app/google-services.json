@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "526646847208",
+    "firebase_url": "https://romi-df78d.firebaseio.com",
+    "project_id": "romi-df78d",
+    "storage_bucket": "romi-df78d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526646847208:android:255f55dce210306b0bcb5d",
+        "android_client_info": {
+          "package_name": "com.romiApp.romi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526646847208-9isvnhqa60g69s1f6c7oelkleu2kjo66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKInslagAZNHT6HHdC1KB9sgQGp43hvVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526646847208-9isvnhqa60g69s1f6c7oelkleu2kjo66.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "526646847208-vos2863oeg853mv0ffvj5ilbovkr0fmr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.romiApp.romi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
