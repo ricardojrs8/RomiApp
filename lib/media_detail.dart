@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:romi/src/widgets/app_button.dart';
 
 
 class MediaDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+
       body: new Stack(
       alignment: Alignment.center,
       children: <Widget>[
-
       _crearFondo(),
-      _botonLogin(context),
+      AppButton(
+                color: Colors.grey[800],
+                onPressed: () {Navigator.pushNamed(context, '/login');},
+                name: "LoGinr",
+                horizontal1: 10.0,
+                vertical1: 15.0,
+              )
+      //_botonLogin(context),
         
       ],
       )
@@ -32,29 +40,4 @@ Widget _crearFondo(){
 
     );
 }
-
-
-Widget _botonLogin(BuildContext context){
-
-  return Positioned(
-          bottom: 60.0,
-          child: RaisedButton(
-          padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-          shape: RoundedRectangleBorder(
-          borderRadius: new BorderRadius.circular(5.0),
-          ),
-          child: Text('login'),
-          color: Colors.grey[800],
-          textColor: Colors.white,
-          onPressed: () {
-            Navigator.pushNamed(context, '/login');},
-          ),
-        );
-
-}
-
-
-
-
-
 }

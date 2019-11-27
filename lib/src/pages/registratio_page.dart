@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'dart:ui' as ui;
-import 'package:romi/media_detail.dart';
 import 'package:romi/src/mixins/validation_mixins.dart';
+import 'package:romi/src/services/Authentication.dart';
+import 'package:romi/src/widgets/app.buttonFormu.dart';
 import 'package:romi/src/widgets/app_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   static const String routeName = '/registration';
@@ -10,42 +13,58 @@ class RegisterPage extends StatefulWidget {
   _RegisterPageState createState() => _RegisterPageState();
 }
 class _RegisterPageState extends State<RegisterPage> with  ValidationMixins{
+
  // al colocar el guin bajo le estamos diciendo a dart que es una varible local
+  final auth = FirebaseAuth.instance;
 
   FocusNode _focusNode;
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
-  bool _autoValidate = false;
-  String _errorMessage = "";
+  TextEditingController _nombreController = TextEditingController();
+  TextEditingController _edadController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  bool showSpinner = false;
+
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>(); // instancia
+  bool _autoValidar = false;
 
   @override
-  void initState(){
+  void initState() { 
     super.initState();
     _focusNode = FocusNode();
+    //_nombreController = TextEditingController();
+    //_edadController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    
   }
-  @override
 
+  // con la funcion dispose libero todos los recursos que no se estan utilizando
+  @override
   void dispose(){
-    super.dispose();  
-     _focusNode.dispose();
+    super.dispose();
+    _focusNode.dispose();
+    _nombreController.dispose();
+    _edadController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    
-    }
 
+  }
 
+  
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
+        appBar: AppBar(
         title: Text(""),
         backgroundColor: Colors.grey[800],
         elevation: 0.0,
       ),
-      body: new Stack(
-        
+      backgroundColor: Colors.transparent,
+      body: ModalProgressHUD(
+      inAsyncCall: showSpinner,
+      child: Form(
+      key: _formkey,
+      child: new Stack( 
       alignment: Alignment.center,
       children: <Widget>[
 
@@ -54,10 +73,10 @@ class _RegisterPageState extends State<RegisterPage> with  ValidationMixins{
         
       ],
       )
+      )
+      )
     );
   }
-}
-
 
 
 Widget _crearFondo2(){
@@ -85,22 +104,13 @@ Widget _crearFondo2(){
     );
 }
 
+
 Widget _loginForm(BuildContext context) {
-
   final size = MediaQuery.of(context).size;
-
+ 
   return SingleChildScrollView(
     child: Column(
       children: <Widget>[
-
-        // SafeArea(
-
-        //   child: Container(
-        //     height: 1.0,
-        //   ),
-
-        // ),
-
         Container(
           width: size.width * 0.85,
           margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -125,15 +135,15 @@ Widget _loginForm(BuildContext context) {
               ),
 
               SizedBox( height: 50.0, ),
-              _crearNombreU(context),
+              _nameField(),
               SizedBox( height: 30.0, ),
-              _crearEdas(),
+              _edadField(),
               SizedBox( height: 30.0, ),
-              _crearEmail(),
+              _emailField(),
               SizedBox( height: 30.0, ),
-              _crearPassword(),
+              _passwordField(),
               SizedBox( height: 50.0, ),
-              _crearBoton()
+              _submitButton()
 
             ],
 
@@ -147,154 +157,102 @@ Widget _loginForm(BuildContext context) {
     ),
   );
 
-}
-
-
-Widget _crearNombreU(BuildContext context){
-
-  
-
-    var onChanged;
-    return Container(
-  
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-  
-      child: TextField(
-        style:
-        new TextStyle(fontSize: 22.0, color: Colors.white),
-   
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          icon:  Icon( Icons.accessibility_new, color: Colors.white, ),
-          hintText: 'Pedrojr',
-          labelText: 'Nombre',
-          labelStyle: TextStyle(color: Colors.white),
-          hintStyle: TextStyle(fontSize: 20.0, color: Colors.white),
-  
-          focusColor: Colors.white
-          
-          
-  
-        ),
-        onChanged: onChanged,
-    ),
-
-  
-  );
-
-
-}
-
-Widget _crearEdas(){
-
-  return Container(
-
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-
-    child: TextField(
-      style:
-      new TextStyle(fontSize: 22.0, color: Colors.white),
- 
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        icon:  Icon( Icons.alternate_email, color: Colors.white, ),
-        hintText: '23',
-        labelText: 'Edad',
-        labelStyle: TextStyle(color: Colors.white),
-        focusColor: Colors.white
-        
-        
-
-      ),
-
-    ),
-
-
-  );
-
-
-}
 
 
 
-Widget _crearEmail(){
-
-  return Container(
-
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-
-    child: TextField(
-      style:
-      new TextStyle(fontSize: 22.0, color: Colors.white),
- 
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        icon:  Icon( Icons.alternate_email, color: Colors.white, ),
-        hintText: 'ejemplo@correo.com',
-        labelText: 'Correo electrónico',
-        labelStyle: TextStyle(color: Colors.white),       
-
-        focusColor: Colors.white
-        
-        
-
-      ),
-
-    ),
+  }
 
 
-  );
+  Widget _nameField(){
+    return AppTextField(
+              focusNode: _focusNode,
+              autoValidate: _autoValidar,
+              validator: validateNombre,
+              controller: _nombreController,
+              hintText: 'Pedrojr',
+              labelText: 'Nombre',
+              icono: Icon( Icons.accessibility_new, color: Colors.white, ),
+              onSaved: (value) { },
+
+        );
+
+  }
+
+  Widget _edadField(){
+    return   AppTextField(
+              controller: _edadController,
+              autoValidate: _autoValidar,
+              validator: validateEdad,
+              hintText: '23',
+              labelText: 'Edad',
+              icono: Icon( Icons.nature_people, color: Colors.white, ),
+              onSaved: (value) { 
+              _emailController.text = value;
+              print('Email $_emailController');
+              },
+              
+              );
+
+  }
+
+  Widget _emailField(){
+
+    return    AppTextField(
+              controller: _emailController,
+              autoValidate: _autoValidar,
+              validator: validateEmail,
+              hintText: 'ejemplo@correo.com',
+              labelText: 'Correo electrónico',
+              icono:  Icon( Icons.alternate_email, color: Colors.white, ),
+              onSaved: (value) { },
+              );
+  }
+
+  Widget _passwordField(){
+    return   AppTextField(
+              controller: _passwordController,
+              autoValidate: _autoValidar,
+              validator: validatePassword,
+              icono:  Icon( Icons.lock_outline, color: Colors.white, ),
+
+              labelText: 'Contraseña',
+              obscureText: true,
+              onSaved: (value) { },
+              );
+
+
+  }
+
+  Widget _submitButton(){
+    return   AppButtonFormu(
+                color: Colors.yellow,
+                name: "LoGin3",
+                horizontal1: 10.0,
+                vertical1: 15.0,
+                onPressed: () async {
+                  if(_formkey.currentState.validate()){
+                  var newUser = await Authentication().createUser(email: _emailController.text, password: _passwordController.text);
+                  if(newUser != null){
+                    Navigator.pushNamed(context, '/shopscreen');
+                  }
+                  _nombreController.text = "";
+                  _edadController.text = "";
+                  _emailController.text = "";
+                  _passwordController.text = "";
+                  FocusScope.of(context).requestFocus(_focusNode);
+                  }else{
+                    setState(() => _autoValidar = true);
+                  } 
+                },
+                
+              );
+
+  }
+
+
 
 
 }
 
 
-Widget _crearPassword(){
 
-  return Container(
-
-    
-
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-
-    child: TextField(
-      obscureText: true,
-      style:
-      new TextStyle(fontSize: 22.0, color: Colors.white),
- 
-      decoration: InputDecoration(
-        icon:  Icon( Icons.lock_outline, color: Colors.white, ),
-        fillColor: Colors.white,
-        labelText: 'Contraseña',
-        labelStyle: TextStyle(color: Colors.white),
-
-      ),
-
-    ),
-
-
-  );
-
-
-}
-
-Widget _crearBoton(){
-
-  return RaisedButton(
-      child: Container(
-        padding: EdgeInsets.symmetric( horizontal: 80.0, vertical: 15.0),
-        child: Text('Ingresar'),
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0)
-      ),
-      elevation: 0.0,
-      color: Colors.yellow,
-      textColor: Colors.white,
-      onPressed: () {},
-
-  );
-
-
-
-}
