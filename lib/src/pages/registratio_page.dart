@@ -3,6 +3,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'dart:ui' as ui;
 import 'package:romi/src/mixins/validation_mixins.dart';
 import 'package:romi/src/services/Authentication.dart';
+import 'package:romi/src/services/usuario_provide.dart';
 import 'package:romi/src/widgets/app.buttonFormu.dart';
 import 'package:romi/src/widgets/app_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +27,8 @@ class _RegisterPageState extends State<RegisterPage> with  ValidationMixins{
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>(); // instancia
   bool _autoValidar = false;
+
+  final usuarioProvider = new UsuarioProvider();
 
   @override
   void initState() { 

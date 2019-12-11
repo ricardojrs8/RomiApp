@@ -161,7 +161,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                 elevation: 2.0,
                 fillColor: Colors.black,
                 child: Icon(
-                  Icons.add_shopping_cart,
+                  Icons.call_missed_outgoing,
                   color: Colors.white,
                   size: 30.0,
                 ),
@@ -177,7 +177,20 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
 
 
   Drawer getDrawer(BuildContext context){
-    var header = DrawerHeader(child: Text(""));
+    
+    var header = DrawerHeader(
+      
+      child: Container(),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('images/imgf.jpg'),
+            fit: BoxFit.cover
+          )
+        )
+
+      );
+      
+      
     var info = AboutListTile(
       child: Text("Ajustes"),
       applicationIcon: Icon(Icons.favorite),
@@ -201,11 +214,12 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
   
   ListView getList(){
     return ListView(
+      padding: EdgeInsets.zero,
       children: <Widget>[
         header,
         getItem(Icon(Icons.settings),'Inicio','/shopscreen'),
         getItem(Icon(Icons.home),'Registros','/galeria1'),
-        //getItem(Icon(Icons.battery_charging_full),'Proyectos', '/'),
+       //getItem(Icon(Icons.battery_charging_full),'Proyectos', '/video'),
     
         info
       ],
@@ -220,7 +234,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
     return Scaffold(
         appBar: AppBar(
           title: Text(""),
-          backgroundColor: Colors.grey[800],
+          backgroundColor: Colors.grey[700],
             actions: <Widget>[
          IconButton(
            icon: Icon(Icons.power_settings_new),
@@ -233,8 +247,10 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
        ],
       ),
       drawer: getDrawer(context),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[300],
       body: AnnotatedRegion<SystemUiOverlayStyle>(
+        //Image(image: AssetImage('images/romi1.png')),
+        
         value: SystemUiOverlayStyle.dark,
         child: ListView(
           padding: EdgeInsets.symmetric(vertical: 60.0),
@@ -244,13 +260,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
               padding: EdgeInsets.symmetric(horizontal: 30.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                // children: <Widget>[
-                //   Icon(
-                //     Icons.menu,
-                //     size: 30.0,
-                //     color: Colors.grey,
-                //   ),
-                // ],
+          
               ),
             ),
             //SizedBox(height: 20.0),
@@ -283,13 +293,20 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                   ),
                 ),
                 Tab(
-                  child: Text(
-                    'Minas',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: 
+                    FlatButton(
+                     child: Text("Minas",  textAlign: TextAlign.end,
+                     style: TextStyle(
+                       fontSize: 16, 
+                       color: Colors.black,
+                       
+                       ),
+                     ), 
+                     
+                     onPressed: (){
+                                   Navigator.pushNamed(context, '/minas');
+                     }                    
+                   ,)
                 ),
              
               ],
@@ -337,6 +354,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
           ],
         ),
       ),
+      
     );
   }
 }

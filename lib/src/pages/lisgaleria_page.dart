@@ -84,12 +84,10 @@ class ListGaleria extends StatelessWidget {
 
                   ),
                     ListTile(
-                    title:  Text('${ foto.titulo} - ${foto.comentario}'),
-                    subtitle: Text( foto.id ),
+                    title:  Text('${ foto.titulo}'),
+                    subtitle: Text( '${foto.comentario}' ),
                    onTap: () => Navigator.pushNamed(context, '/galeria', arguments: foto),
                      ),
-
-
 
               ],
             ),
@@ -97,9 +95,6 @@ class ListGaleria extends StatelessWidget {
 
           ), 
       );
-
-
-     
 
     }
 

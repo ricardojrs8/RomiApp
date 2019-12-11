@@ -12,12 +12,14 @@ class GaleriaModel {
     String id;
     String titulo;
     String comentario;
+    String comentario2;
     String fotoUrl;
 
     GaleriaModel({
         this.id,
         this.titulo = '',
         this.comentario = '',
+        this.comentario2 = '',
         this.fotoUrl,
     });
 
@@ -25,6 +27,7 @@ class GaleriaModel {
         id          : json["id"],
         titulo      : json["titulo"],
         comentario  : json["comentario"],
+        comentario2  : json["comentario2"],
         fotoUrl     : json["fotoUrl"],
     );
 
@@ -32,6 +35,7 @@ class GaleriaModel {
        // "id"          : id,
         "titulo"      : titulo,
         "comentario"  : comentario,
+        "comentario2"  : comentario2,
         "fotoUrl"     : fotoUrl,
     };
 }

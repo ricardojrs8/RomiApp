@@ -1,7 +1,9 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:romi/src/bloc/galeria.dart';
 import 'package:romi/src/bloc/provider.dart';
 import 'package:romi/src/mixins/validation_mixins.dart';
@@ -12,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'dart:async';
 
 class GaleriaPage extends StatefulWidget {
   static const String routeName = '/galeria';
@@ -21,6 +24,7 @@ class GaleriaPage extends StatefulWidget {
 }
 
 class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
+
 
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>(); // instancia
@@ -34,6 +38,7 @@ class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
 
   
   var selectedCurrency, selectedType;
+  var selectedCurrency2, selectedType2;
 
     List<String> _suelos = <String>[
     'Arenosos',
@@ -48,13 +53,49 @@ class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
   ];
      List<String> _clima = <String>[
     'Tropical',
-    'seco',
+    'Seco',
     'Moderado',
     'Continental'
     'Polar',
     'Tierras altas'
   ];
 
+
+  DateTime _date = new DateTime.now();
+  TimeOfDay _time = new TimeOfDay.now();
+  DateTime _dateTime;
+
+
+   Future<Null> _handleDatePicker(BuildContext floatContext) async {
+    final dateResult = await showDatePicker(
+        context: floatContext,
+        firstDate: DateTime.now(),
+        initialDate: DateTime.now().subtract(Duration(days: 30)),
+        lastDate: DateTime.now().add(Duration(days: 60)));
+
+    //prints the chosen date from the picker
+    print(dateResult);
+ 
+  }
+
+   Future<Null> _selectTime(BuildContext context) async {
+
+    final TimeOfDay picked =  await showTimePicker(
+      context: context,
+      initialTime: _time,
+ 
+
+    );
+
+    if( picked != null && picked != _time ){
+      print("seleccionar hora: ${_time.toString()}");
+      setState(() {
+        _time = picked;
+      });
+    }
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,20 +141,31 @@ class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
               SizedBox( height: 20.0, ),
               _bropdown2(),
               SizedBox( height: 40.0, ),
-
               _dectecto(),
 
               SizedBox( height: 30.0, ),
+                
+                new Text('Seleccionar la fecha: ${_date.toString()}'),
+                new RaisedButton(
+                  child: new Text('Seleccionar la fecha'),
+                  onPressed: () => showDatePicker(
+                      context: context,
+                      initialDate:  DateTime.now(),
+                      firstDate:
+                           DateTime.now().subtract( Duration(days: 30)),
+                      lastDate:  DateTime.now().add( Duration(days: 30)),
+                    ),
+                ),
+                new Text(''),
+                 new Text('Seleccionar hora: ${_time.toString()}'),
+                new RaisedButton(
+                   child: new Text('Seleccionar hora'),
+                  onPressed: () {_selectTime(context);},
+                ),
+                SizedBox( height: 30.0, ),
               _submitButton(),
               SizedBox( height: 60.0, ),
               
-
-              
-              
-
-
-
-
             ],
 
           ),
@@ -160,8 +212,8 @@ class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
 
   Widget _dectecto(){
   return new TextFormField(
-  initialValue: galeria.comentario.toString(),
-  onSaved: (value) => galeria.comentario = value,
+  initialValue: galeria.comentario2.toString(),
+  onSaved: (value) => galeria.comentario2 = value,
   validator: comentario,
   keyboardType: TextInputType.multiline,
   maxLines: 2,
@@ -176,38 +228,75 @@ class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
 
 
   Widget _bropdown(){
+   
     return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                //mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Icon(
-                    FontAwesomeIcons.seedling,
-                    size: 25.0,
-                    color: Color(0xff11b719),
-                  ),
+        
                   SizedBox(width: 50.0),
-                  DropdownButton(
-                    items: _suelos
-                        .map((value) => DropdownMenuItem(
+          
+                  SizedBox(height: 20.0,),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: 
+                    Firestore.instance.collection("currency").snapshots(),
+                    builder: (context,snapshot){
+                      if(!snapshot.hasData){
+                        Text("Loading");
+                      }else{
+                        List<DropdownMenuItem> currencyIteams=[];
+                        for(int i=0;i<snapshot.data.documents.length;i++){
+                          DocumentSnapshot snap= snapshot.data.documents[i];
+                          currencyIteams.add(
+                            DropdownMenuItem(
                               child: Text(
-                                value,
-                                style: TextStyle(color: Color(0xff11b719)),
+                                snap.documentID,
+                                style: TextStyle(color: Color(0xff11b719)), 
                               ),
-                              value: value,
-                            ))
-                        .toList(),
-                    onChanged: (selectedAccountType) {
-                      print('$selectedAccountType');
-                      setState(() {
-                        selectedType = selectedAccountType;
-                      });
+                              value: "${snap.documentID}",
+                            ),
+                          );
+                        }
+                        return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(FontAwesomeIcons.seedling,size: 25.0, color: Color(0xff11b719)),
+                          SizedBox(width: 20.0,),
+                          DropdownButton(
+                            items: currencyIteams, 
+                            onChanged: (currencyValue) {
+                              final snackBar = SnackBar(
+                                 content:
+                              Text('Selected Currency value is $currencyValue',style: TextStyle(color: Color(0xff11b719)),),
+
+                              );
+                              Scaffold.of(context).showSnackBar(snackBar);
+                              setState(() {
+                                selectedCurrency=currencyValue;
+                              });
+
+
+                            },
+                            value: selectedCurrency,
+                            isExpanded: false,
+                            hint: new Text(
+                              "Suelo",
+                              style: TextStyle(color: Color(0xff11b719)),
+
+                            ),
+                          ),
+
+
+                        ],
+
+                      );
+
+
+                      }
+                    
+
                     },
-                    value: selectedType,
-                    isExpanded: false,
-                    hint: Text(
-                      'Suelo',
-                      style: TextStyle(color: Color(0xff11b719)),
-                    ),
-                  )
+
+                  ),
                 ],
               );
 
@@ -217,37 +306,71 @@ class _GaleriaPageState extends State<GaleriaPage> with ValidationMixins {
 
     Widget _bropdown2(){
     return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                //mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Icon(
-                    FontAwesomeIcons.globeAmericas,
-                    size: 25.0,
-                    color: Color(0xff11b719),
-                  ),
                   SizedBox(width: 50.0),
-                  DropdownButton(
-                    items: _clima
-                        .map((value) => DropdownMenuItem(
+                  SizedBox(height: 20.0,),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: 
+                    Firestore.instance.collection("currency2").snapshots(),
+                    builder: (context,snapshot){
+                      if(!snapshot.hasData){
+                        Text("Loading");
+                      }else{
+                        List<DropdownMenuItem> currency2Iteams=[];
+                        for(int i=0;i<snapshot.data.documents.length;i++){
+                          DocumentSnapshot snap= snapshot.data.documents[i];
+                          currency2Iteams.add(
+                            DropdownMenuItem(
                               child: Text(
-                                value,
-                                style: TextStyle(color: Color(0xff11b719)),
+                                snap.documentID,
+                                style: TextStyle(color: Color(0xff11b719)), 
                               ),
-                              value: value,
-                            ))
-                        .toList(),
-                    onChanged: (selectedAccountType) {
-                      print('$selectedAccountType');
-                      setState(() {
-                        selectedType = selectedAccountType;
-                      });
+                              value: "${snap.documentID}",
+                            ),
+                          );
+                        }
+                        return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(FontAwesomeIcons.seedling,size: 25.0, color: Color(0xff11b719)),
+                          SizedBox(width: 20.0,),
+                          DropdownButton(
+                            items: currency2Iteams, 
+                            onChanged: (currency2Value) {
+                              final snackBar = SnackBar(
+                                 content:
+                              Text('Selected Currency value is $currency2Value',style: TextStyle(color: Color(0xff11b719)),),
+
+                              );
+                              Scaffold.of(context).showSnackBar(snackBar);
+                              setState(() {
+                                selectedCurrency2=currency2Value;
+                              });
+
+
+                            },
+                            value: selectedCurrency2,
+                            isExpanded: false,
+                            hint: new Text(
+                              "Clima",
+                              style: TextStyle(color: Color(0xff11b719)),
+
+                            ),
+                          ),
+
+
+                        ],
+
+                      );
+
+
+                      }
+                    
+
                     },
-                    value: selectedType,
-                    isExpanded: false,
-                    hint: Text(
-                      'Clima',
-                      style: TextStyle(color: Color(0xff11b719)),
-                    ),
-                  )
+
+                  ),
                 ],
               );
 

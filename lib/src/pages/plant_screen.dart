@@ -26,9 +26,9 @@ class _PlantScreenState extends State<PlantScreen> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.only(
-                      left: 30.0,
+                      left: 10.0,
                       right: 30.0,
-                      top: 60.0,
+                      top: 50.0,
                     ),
                     height: 520.0,
                     color: Color(0xFF616161),
@@ -65,40 +65,8 @@ class _PlantScreenState extends State<PlantScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 40.0),
-                        Text(
-                          'FROM',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                          ),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text(
-                          '\$${widget.plant.price}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 40.0),
-                        Text(
-                          'SIZE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                          ),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text(
-                          widget.plant.size,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                     
+                    
                         SizedBox(height: 40.0),
                         RawMaterialButton(
                           padding: EdgeInsets.all(20.0),
@@ -106,12 +74,29 @@ class _PlantScreenState extends State<PlantScreen> {
                           elevation: 2.0,
                           fillColor: Colors.black,
                           child: Icon(
-                            Icons.add_shopping_cart,
+                            Icons.video_call,
                             color: Colors.white,
                             size: 35.0,
                           ),
-                          onPressed: () => print('Add to cart'),
+                          onPressed: () =>  {Navigator.pushNamed(context, '/video')},
                         ),
+                        SizedBox(height: 10.0),
+                        RawMaterialButton(
+                          padding: EdgeInsets.all(20.0),
+                          shape: CircleBorder(),
+                          elevation: 2.0,
+                          fillColor: Colors.black,
+                          child: Icon(
+                            Icons.zoom_out_map,
+                            color: Colors.white,
+                            size: 35.0,
+                            
+                          ),
+                          onPressed: () => {Navigator.pushNamed(context, '/date')},
+                        ),
+
+
+
                       ],
                     ),
                   ),
@@ -150,7 +135,7 @@ class _PlantScreenState extends State<PlantScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            'All to know...',
+                            'Description',
                             style: TextStyle(
                               fontSize: 24.0,
                               fontWeight: FontWeight.w600,

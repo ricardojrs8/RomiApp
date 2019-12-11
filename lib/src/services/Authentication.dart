@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:romi/src/model/auth_request.dart';
+import 'package:http/http.dart';
 
 class Authentication{
 
   final _auth = FirebaseAuth.instance;
+
+
 
   Future<AuthenticationRequiest> createUser({String email = "", String password = ""}) async {
          AuthenticationRequiest authRequest = AuthenticationRequiest();
